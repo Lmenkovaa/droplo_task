@@ -1,28 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
 import Button from "@/components/buttons/Button";
 
 const MenuForm = ({ onSubmit, onCancel, initialData = {} }) => {
-  const [label, setLabel] = useState(initialData.label || "");
-  const [url, setUrl] = useState(initialData.url || "");
+  const validationSchema = Yup.object().shape({
+    label: Yup.string()
+      .required("Pole Nazwa jest wymagane")
+      .min(2, "Minimalna długość to 2 znaki"),
+    url: Yup.string()
+      .required("Pole Link jest wymagane")
+      .url("Nieprawidłowy format linku"),
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (label && url) {
-      onSubmit({
-        id: initialData.id || Date.now(),
-        label,
-        url,
-      });
-      setLabel("");
-      setUrl("");
-    }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    defaultValues: initialData,
+    resolver: yupResolver(validationSchema),
+  });
+
+  const onFormSubmit = (data) => {
+    onSubmit({ ...data, id: initialData.id || Date.now() });
+    reset();
   };
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onFormSubmit)}
       className="flex flex-col gap-4 p-4 border rounded-md bg-white border-gray-300 min-w-full"
     >
       <div>
@@ -35,11 +45,15 @@ const MenuForm = ({ onSubmit, onCancel, initialData = {} }) => {
         <input
           id="label"
           type="text"
-          value={label}
           placeholder="np. Promocje"
-          className="block w-full p-2 border border-gray-300 placeholder:text-gray-400 text-black shadow-xs rounded-md"
-          onChange={(e) => setLabel(e.target.value)}
+          {...register("label")}
+          className={`block w-full p-2 border ${
+            errors.label ? "border-red-500" : "border-gray-300"
+          } placeholder:text-gray-400 text-black shadow-xs rounded-md`}
         />
+        {errors.label && (
+          <p className="text-sm text-red-500 mt-1">{errors.label.message}</p>
+        )}
       </div>
 
       <div>
@@ -52,11 +66,15 @@ const MenuForm = ({ onSubmit, onCancel, initialData = {} }) => {
         <input
           id="url"
           type="text"
-          value={url}
           placeholder="Wklej lub wyszukaj"
-          className="block w-full p-2 border border-gray-300 placeholder:text-gray-400 text-black shadow-xs rounded-md"
-          onChange={(e) => setUrl(e.target.value)}
+          {...register("url")}
+          className={`block w-full p-2 border ${
+            errors.url ? "border-red-500" : "border-gray-300"
+          } placeholder:text-gray-400 text-black shadow-xs rounded-md`}
         />
+        {errors.url && (
+          <p className="text-sm text-red-500 mt-1">{errors.url.message}</p>
+        )}
       </div>
 
       <div className="flex gap-2">
