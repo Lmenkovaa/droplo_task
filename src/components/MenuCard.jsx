@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Item from "./Item";
 import MenuForm from "./MenuForm";
+import SortableTree from "./SortableTree";
 
-const MenuList = ({ menuItems, onAdd, onEdit, onDelete }) => {
+const MenuCard = ({ menuItems, onAdd, onEdit, onDelete, onReorder }) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const handleAdd = (parentId, newItem) => {
@@ -20,30 +20,17 @@ const MenuList = ({ menuItems, onAdd, onEdit, onDelete }) => {
     setIsFormOpen(false);
   };
 
-  const renderItems = (items, level = 0) =>
-    items.map((item, index) => (
-      <Item
-        key={item.id}
-        id={item.id}
-        label={item.label}
-        url={item.url}
-        onAdd={handleAdd}
-        onEdit={handleEdit}
-        onDelete={onDelete}
-        level={level}
-        className={index === 0 ? "first:rounded-t-lg" : ""}
-      >
-        {item.children?.length > 0 && renderItems(item.children, level + 1)}
-      </Item>
-    ));
-
-  if (menuItems.length === 0) {
-    return null;
-  }
-
   return (
     <div className="border bg-primary-100 rounded-lg w-full">
-      {renderItems(menuItems)}
+      <div className="bg-secondary-100 rounded-lg overflow-hidden">
+        <SortableTree
+          menuItems={menuItems}
+          handleAdd={handleAdd}
+          handleEdit={handleEdit}
+          handleDelete={onDelete}
+          handleReorder={onReorder}
+        />
+      </div>
       <div className="flex justify-start mx-6 my-5">
         {isFormOpen ? (
           <MenuForm
@@ -63,4 +50,4 @@ const MenuList = ({ menuItems, onAdd, onEdit, onDelete }) => {
   );
 };
 
-export default MenuList;
+export default MenuCard;
