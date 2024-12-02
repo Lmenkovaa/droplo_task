@@ -20,6 +20,8 @@ const MenuCard = ({ menuItems, onAdd, onEdit, onDelete, onReorder }) => {
     setIsFormOpen(false);
   };
 
+  if (!menuItems || menuItems.length === 0) return null;
+
   return (
     <div className="border bg-primary-100 rounded-lg w-full">
       <div className="bg-secondary-100 rounded-t-lg overflow-hidden">
