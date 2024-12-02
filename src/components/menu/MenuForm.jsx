@@ -5,6 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import Button from "@/components/buttons/Button";
 import Image from "next/image";
+import { v4 as uuidv4 } from "uuid";
 
 const MenuForm = ({ onSubmit, onCancel, initialData = {} }) => {
   const validationSchema = Yup.object().shape({
@@ -25,7 +26,7 @@ const MenuForm = ({ onSubmit, onCancel, initialData = {} }) => {
   });
 
   const onFormSubmit = (data) => {
-    onSubmit({ ...data, id: initialData.id || Date.now() });
+    onSubmit({ ...data, id: initialData.id || uuidv4() });
     reset();
   };
 

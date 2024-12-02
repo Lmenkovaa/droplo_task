@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import MenuForm from "./MenuForm";
+import MenuForm from "@/components/menu/MenuForm";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -13,7 +13,6 @@ const Item = ({
   onAdd,
   onEdit,
   onDelete,
-  maxDepth = 3,
   isFirst = false,
   depth,
   baseMargin,
@@ -96,10 +95,6 @@ const Item = ({
           <button
             className="text-sm font-semibold text-secondary-700 py-2.5 px-3.5 border-l border-gray-300"
             onClick={() => {
-              if (depth + 1 >= maxDepth) {
-                setError("Max depth reached!");
-                return;
-              }
               setIsAddFormVisible((prevIsAddFormVisible) => {
                 if (!prevIsAddFormVisible) {
                   setIsEditFormVisible(false);

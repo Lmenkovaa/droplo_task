@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import MenuForm from "./MenuForm";
-import SortableTree from "./SortableTree";
+import MenuForm from "@/components/menu/MenuForm";
+import SortableTree from "@/components/menu/SortableTree";
 
 const MenuCard = ({ menuItems, onAdd, onEdit, onDelete, onReorder }) => {
   const [isFormOpen, setIsFormOpen] = useState(false);

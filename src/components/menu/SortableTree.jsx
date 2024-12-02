@@ -12,7 +12,7 @@ import {
   getProjection,
   removeChildrenOf,
 } from "@/utils/menuUtils";
-import Item from "./Item";
+import Item from "@/components/menu/Item";
 
 const INDENTATION_WIDTH = 64;
 
@@ -30,7 +30,7 @@ const SortableTree = ({
   const flattenedTree = flattenItems(menuItems);
 
   return removeChildrenOf(flattenedTree, activeId ? [activeId] : [], temporaryItems);
-}, [activeId, menuItems]);
+},[activeId, menuItems]);
 
 
   const handleDragStart = ({ active: { id: activeId } }) => {
