@@ -24,14 +24,17 @@ const SortableTree = ({
   handleReorder,
 }) => {
   const [activeId, setActiveId] = useState(null);
-  const [temporaryItems, setTemporaryItems] = useState([]); 
+  const [temporaryItems, setTemporaryItems] = useState([]);
 
   const flattenedItems = useMemo(() => {
-  const flattenedTree = flattenItems(menuItems);
+    const flattenedTree = flattenItems(menuItems);
 
-  return removeChildrenOf(flattenedTree, activeId ? [activeId] : [], temporaryItems);
-},[activeId, menuItems]);
-
+    return removeChildrenOf(
+      flattenedTree,
+      activeId ? [activeId] : [],
+      temporaryItems,
+    );
+  }, [activeId, menuItems]);
 
   const handleDragStart = ({ active: { id: activeId } }) => {
     setActiveId(activeId);
@@ -41,7 +44,7 @@ const SortableTree = ({
   const handleDragCancel = () => {
     setActiveId(activeId);
     setTemporaryItems([]);
-  }
+  };
 
   const handleDragEnd = (event) => {
     const { active, over, delta } = event;

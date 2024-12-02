@@ -21,14 +21,14 @@ module.exports = {
           700: "#344054",
         },
         white: "#FFFFFF",
-        gray:{
+        gray: {
           300: "#D0D5DD",
           400: "#667085",
         },
         purple: {
           100: "#D6BBFB",
           300: "#6941C6",
-        }
+        },
       },
     },
   },

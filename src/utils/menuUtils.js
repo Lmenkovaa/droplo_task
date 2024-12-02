@@ -1,24 +1,18 @@
 import { arrayMove } from "@dnd-kit/sortable";
+import { v4 as uuidv4 } from "uuid";
 
-export const addRecursive = (
-  items,
-  parentId,
-  newItem,
-  currentDepth,
-  maxDepth,
-) => {
+export const addRecursive = (items, parentId, newItem, currentDepth) => {
+  if (!Array.isArray(items)) {
+    throw new Error("Items must be an array");
+  }
+
   return items.map((item) => {
     if (item.id === parentId) {
-      if (currentDepth >= maxDepth) {
-        console.warn("Maximum depth reached. Item not added.");
-        return item;
-      }
-
       return {
         ...item,
         children: [
           ...(item.children || []),
-          { id: Date.now(), ...newItem, children: [] },
+          { id: uuidv4(), ...newItem, children: [] },
         ],
       };
     }
@@ -26,19 +20,17 @@ export const addRecursive = (
     return {
       ...item,
       children: item.children
-        ? addRecursive(
-            item.children,
-            parentId,
-            newItem,
-            currentDepth + 1,
-            maxDepth,
-          )
+        ? addRecursive(item.children, parentId, newItem, currentDepth + 1)
         : [],
     };
   });
 };
 
 export const updateRecursive = (items, itemId, updatedItem) => {
+  if (!Array.isArray(items)) {
+    throw new Error("Items must be an array");
+  }
+
   return items.map((item) => {
     if (item.id === itemId) {
       return { ...item, ...updatedItem };
@@ -54,6 +46,10 @@ export const updateRecursive = (items, itemId, updatedItem) => {
 };
 
 export const deleteRecursive = (items, itemId) => {
+  if (!Array.isArray(items)) {
+    throw new Error("Items must be an array");
+  }
+
   return items
     .filter((item) => item.id !== itemId)
     .map((item) => ({
@@ -62,20 +58,14 @@ export const deleteRecursive = (items, itemId) => {
     }));
 };
 
-export const addItemToMenuCard = (
-  menuList,
-  listId,
-  parentId,
-  newItem,
-  maxDepth = 3,
-) => {
+export const addItemToMenuCard = (menuList, listId, parentId, newItem) => {
   return menuList.map((menu) => {
     if (menu.id === listId) {
       return {
         ...menu,
         items: parentId
-          ? addRecursive(menu.items, parentId, newItem, 1, maxDepth)
-          : [...menu.items, { id: Date.now(), ...newItem, children: [] }],
+          ? addRecursive(menu.items, parentId, newItem, 1)
+          : [...menu.items, { id: uuidv4(), ...newItem, children: [] }],
       };
     }
     return menu;
@@ -83,8 +73,7 @@ export const addItemToMenuCard = (
 };
 
 export const flattenItems = (items, parentId = null, depth = 0) => {
-
-    if (!Array.isArray(items)) {
+  if (!Array.isArray(items)) {
     return [];
   }
 
@@ -131,33 +120,33 @@ export const convertToNestedStructure = (flatItems) => {
   return nestedItems;
 };
 
-function getDragDepth(offset, indentationWidth) {
+export const getDragDepth = (offset, indentationWidth) => {
   return Math.round(offset / indentationWidth);
-}
+};
 
-function getMaxDepth({ previousItem }) {
+export const getMaxDepth = ({ previousItem }) => {
   if (previousItem) {
     return previousItem.depth + 1;
   }
 
   return 0;
-}
+};
 
-function getMinDepth({ nextItem }) {
+export const getMinDepth = ({ nextItem }) => {
   if (nextItem) {
     return nextItem.depth;
   }
 
   return 0;
-}
+};
 
-export function getProjection(
+export const getProjection = (
   items,
   activeId,
   overId,
   dragOffset,
   indentationWidth,
-) {
+) => {
   const overItemIndex = items.findIndex(({ id }) => id === overId);
   const activeItemIndex = items.findIndex(({ id }) => id === activeId);
   const activeItem = items[activeItemIndex];
@@ -200,9 +189,9 @@ export function getProjection(
 
     return newParent ?? null;
   }
-}
+};
 
-export function removeChildrenOf(items, ids, temporaryItems = []) {
+export const removeChildrenOf = (items, ids, temporaryItems = []) => {
   const excludeParentIds = new Set(ids);
 
   const filterRecursive = (items) => {
@@ -220,13 +209,12 @@ export function removeChildrenOf(items, ids, temporaryItems = []) {
         return acc;
       }
 
-      const updatedChildren = item.children ? filterRecursive(item.children) : [];
+      const updatedChildren = item.children
+        ? filterRecursive(item.children)
+        : [];
       return [...acc, { ...item, children: updatedChildren }];
     }, []);
   };
 
   return filterRecursive(items);
-}
-
-
-
+};

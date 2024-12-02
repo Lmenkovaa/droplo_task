@@ -78,7 +78,7 @@ export default function Menu() {
     );
   };
 
-    return (
+  return (
     <div className="min-h-screen w-full bg-primary-100 flex flex-col items-center">
       <main className="flex flex-col gap-8 items-center w-[90vw] max-w-[90rem] py-16">
         <EmptyMenuComponent onAdd={() => setIsFormOpen(true)} />
@@ -109,4 +109,4 @@ export default function Menu() {
       </main>
     </div>
   );
-};
+}
