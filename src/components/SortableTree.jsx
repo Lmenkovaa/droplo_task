@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { DndContext, closestCenter, MeasuringStrategy } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -10,6 +10,7 @@ import {
   flattenItems,
   convertToNestedStructure,
   getProjection,
+  removeChildrenOf,
 } from "@/utils/menuUtils";
 import Item from "./Item";
 
@@ -22,7 +23,25 @@ const SortableTree = ({
   handleDelete,
   handleReorder,
 }) => {
-  const flattenedItems = useMemo(() => flattenItems(menuItems), [menuItems]);
+  const [activeId, setActiveId] = useState(null);
+  const [temporaryItems, setTemporaryItems] = useState([]); 
+
+  const flattenedItems = useMemo(() => {
+  const flattenedTree = flattenItems(menuItems);
+
+  return removeChildrenOf(flattenedTree, activeId ? [activeId] : [], temporaryItems);
+}, [activeId, menuItems]);
+
+
+  const handleDragStart = ({ active: { id: activeId } }) => {
+    setActiveId(activeId);
+    setTemporaryItems([]);
+  };
+
+  const handleDragCancel = () => {
+    setActiveId(activeId);
+    setTemporaryItems([]);
+  }
 
   const handleDragEnd = (event) => {
     const { active, over, delta } = event;
@@ -39,7 +58,7 @@ const SortableTree = ({
       INDENTATION_WIDTH,
     );
     const updatedItems = moveItem(
-      flattenedItems,
+      [...flattenedItems, ...temporaryItems],
       active.id,
       over.id,
       projected.depth,
@@ -47,6 +66,8 @@ const SortableTree = ({
     );
     const newNestedItems = convertToNestedStructure(updatedItems);
 
+    setTemporaryItems([]);
+    setActiveId(null);
     handleReorder(newNestedItems);
   };
 
@@ -66,6 +87,8 @@ const SortableTree = ({
     <DndContext
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
+      onDragStart={handleDragStart}
       measuring={{
         droppable: {
           strategy: MeasuringStrategy.Always,

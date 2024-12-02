@@ -22,7 +22,7 @@ const MenuCard = ({ menuItems, onAdd, onEdit, onDelete, onReorder }) => {
 
   return (
     <div className="border bg-primary-100 rounded-lg w-full">
-      <div className="bg-secondary-100 rounded-lg overflow-hidden">
+      <div className="bg-secondary-100 rounded-t-lg overflow-hidden">
         <SortableTree
           menuItems={menuItems}
           handleAdd={handleAdd}

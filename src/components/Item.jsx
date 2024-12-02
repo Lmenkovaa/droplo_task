@@ -25,9 +25,6 @@ const Item = ({
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
-  console.log("Sortable ID:", id);
-  console.log("transform:", transform);
-
   const handleFormSubmit = (newItem) => {
     onAdd(id, newItem);
     setIsAddFormVisible(false);
